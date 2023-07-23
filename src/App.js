@@ -38,7 +38,7 @@ function App() {
             <Route path='/reset' element={<Reset />} />
             <Route path='/domaine' element={<Domaine />} />
             <Route path='/profile' element={<Profile />} />
-            <Route path='exposition' element={<Exposition />} />
+            <Route path='/exposition' element={<Exposition />} />
             <Route path='/editeExposition' element={<EditeExposition />} />
             <Route path='/monPublic' element={<MonPublic />} />
             <Route path='/expositions' element={<AllExpositions />} />
