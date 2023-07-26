@@ -15,22 +15,34 @@ function Animation(){
                 event.preventDefault();
                 const classForm = event.target.className;
                 let formData = new FormData();
+                const photo = event.target.querySelector('#photo').files[0];
+                const fileErreur = document.getElementById('fileErreur');
+                fileErreur.textContent = "";
+                event.target.querySelector('#alerter').textContent = '';
+
+                if(photo){
+                    if(photo.size <= 1024*1024*2){
+                        formData.append('photo', photo);
+                    }else{
+                        event.target.querySelector('#photo').focus();
+                        fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                        return;
+                    }
+                }
+                
                 if(classForm === "banniere"){
                     formData.append("accueil", event.target.querySelector('#accueil').value);
                     formData.append("plateforme", event.target.querySelector('#plateforme').value);
-                    formData.append("photo", event.target.querySelector('#photo').files[0]);
                     formData.append("sigle", event.target.querySelector('#sigle').value);
                     formData.append("entite", event.target.className);
                 }else if(classForm === "service"){
                     formData.append("titre", event.target.querySelector('#titre').value);
                     formData.append("description", event.target.querySelector('#description').value);
-                    formData.append("photo", event.target.querySelector('#photo').files[0]);
                     formData.append("entite", event.target.className);
                 }else if(classForm === "table"){
                     formData.append("titre", event.target.querySelector('#titre').value);
                     formData.append("sousTitre", event.target.querySelector('#sousTitre').value);
                     formData.append("type", event.target.querySelector('#type').value);
-                    formData.append("photo", event.target.querySelector('#photo').files[0]);
                     formData.append("resume", event.target.querySelector('#resume').value);
                     formData.append("entite", event.target.className);
                 }
@@ -43,8 +55,19 @@ function Animation(){
                 .then(res => res.json())
                 .then(succes => {
                     if(succes.data){
+                        event.target.querySelectorAll('input').forEach(item => {
+                            if(item.name != 'entite'){item.value = ''}
+                            
+                        });
+                        if(event.target.querySelectorAll('textarea')){
+                            event.target.querySelectorAll('textarea').forEach(item => {
+                                item.textContent = '';
+                                item.value = '';
+                            })
+                        }
                         event.target.querySelector('#alerter').innerHTML = "Enrégistrement effectué avec succès.";
                         event.target.querySelector('#alerter').className = "alert alert-success text-center";
+
                     }else{
                         event.target.querySelector('#alerter').innerHTML = "Enrégistrement échoue.";
                         event.target.querySelector('#alerter').className = "alert alert-danger text-center";
@@ -97,6 +120,7 @@ function Animation(){
                                                             <div className="mb-3" hidden={true}>
                                                                 <label htmlFor="photo" className="form-label">Image de la bannière</label>
                                                                 <input type="file" name="photo" className="form-control" id="photo"/>
+                                                                <code id='fileErreur'></code>
                                                             </div>
                                                             <div className="mb-3">
                                                                 <label htmlFor="accueil" className="form-label">Mot d'accueil</label>
@@ -159,7 +183,7 @@ function Animation(){
                                                         <div className='col-lg-6'>
                                                             <div className="mb-3">
                                                                 <label htmlFor="titre" className="form-label">Titre du service</label>
-                                                                <input type="text" name='titre' className="form-control" id="titre" aria-describedby="titre" required/>
+                                                                <input type="text" name='titre' className="form-control" placeholder="Titre du service *" id="titre" aria-describedby="titre" required/>
                                                             </div>
                                                             <div className="mb-3">
                                                                 <div className="form-group form-group-textarea ">
@@ -173,6 +197,7 @@ function Animation(){
                                                             <div className="mb-3">
                                                                 <label htmlFor="photo" className="form-label">Image descriptive</label>
                                                                 <input type="file" className="form-control" id="photo" name="photo" aria-describedby="photo" required/>
+                                                                <code id="fileErreur"></code>
                                                             </div>
                                                             
                                                         </div>
@@ -222,7 +247,7 @@ function Animation(){
                                                             <div className='col-lg-6'>
                                                                 <div className="mb-3">
                                                                     <label htmlFor="titre" className="form-label">Titre du tableau</label>
-                                                                    <input type="text" name='titre' className="form-control" id="titre" aria-describedby="titre" required/>
+                                                                    <input type="text" name='titre' className="form-control" placeholder="Titre du tableau *" id="titre" aria-describedby="titre" required/>
                                                                 </div>
 
                                                                 <div className="mb-3">
@@ -254,6 +279,7 @@ function Animation(){
                                                                 <div className="mb-3">
                                                                     <label htmlFor="photo" className="form-label">Image descriptive</label>
                                                                     <input type="file" className="form-control" id="photo" name="photo" aria-describedby="photo" required/>
+                                                                    <code id="fileErreur"></code>
                                                                 </div>
                                                                 <input type="text" className="form-control" defaultValue={"table"}  name="entite" aria-describedby="entite" hidden required/>
                                                             </div>

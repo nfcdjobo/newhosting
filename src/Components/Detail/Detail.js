@@ -10,7 +10,7 @@ function Detail(params) {
     let [state, setState] = useState({});
     useEffect(()=>{
         if(isCookie_user_authorization === "PASSANT"){
-            fetch(api_url+'getByIdExposition/'+window.location.href.split('#!')[1].split('-')[0], {
+            fetch(api_url+'getExpositionById/'+window.location.href.split('#!')[1].split('-')[0], {
                 headers: { Authorization: `token ${cookie.token}`}
             })
             .then(res => res.json())

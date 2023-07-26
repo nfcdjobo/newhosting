@@ -21,10 +21,13 @@ import AutreUsers from './Components/AutreUsers/AutreUsers';
 import Auteur from './Components/Auteur/Auteur';
 import Coreos from './Components/Coreos/Coreos';
 import Historiques from './Components/Coreos/Historiques';
+import Accueil from './Components/Accueil/Accueil';
+import Login from './Components/Login/Login';
+import Reset from './Components/Reset/Reset';
+import Voirplus from './Components/Voirplus/Voirplus';
 
-const Accueil = lazy( () => import('./Components/Accueil/Accueil'));
-const Login = lazy( () => import('./Components/Login/Login'));
-const Reset = lazy( () => import('./Components/Reset/Reset'));
+
+
 
 
 function App() {
@@ -52,9 +55,11 @@ function App() {
             <Route path='/auteur' element={<Auteur />} />
             <Route path='/coreos' element={<Coreos />} />
             <Route path='/historiques' element={<Historiques />} />
-
+            <Route path='/voirplus' element={<Voirplus />} />
+            
             <Route path='/overUp' element={<AutreUsers />} />
             <Route path='/anime' element={<Animation />} />
+
             <Route path='*' element={<h1 className="chargement">Cette page n'existe pas !</h1>} />
           </Routes>
         </Suspense>

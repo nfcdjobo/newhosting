@@ -17,6 +17,7 @@ function FormulaireExposition(params) {
                         <label htmlFor="photo" className="input-group-text">Image descriptive</label>
                         <input type="file" name="photo" className="form-control" placeholder="Image descriptive du domaine" aria-label="photo" id="photo" aria-describedby="basic-addon1" required onChange={changeFile} accept=".png, .jpg, .jpeg, .webp, .avif, .gif" />
                     </div>
+                    <code id="fileErreur"></code>
                     
                     <div className="form-floating">
                         <textarea className="form-control" placeholder="Leave a comment here" id="description" maxLength={1500} style={{ height: "100px" }} required onInput={writeDescription}></textarea>
@@ -38,8 +39,21 @@ function FormulaireExposition(params) {
         const alerter = document.getElementById('alert');
         alerter.className = ""; alerter.textContent = "";
         const formData = new FormData();
+
+        const photo = event.target.querySelector('#photo').files[0];
+        const fileErreur = document.getElementById('fileErreur');
+        fileErreur.textContent = "";
+        
+        if(photo){
+            if(photo.size <= 1024*1024*2){
+                formData.append('photo', photo);
+            }else{
+                event.target.querySelector('#photo').focus();
+                fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                return;
+            }
+        }
         formData.append("titre", event.target.querySelector('#titre').value);
-        if(event.target.querySelector('#photo').files[0]){formData.append("photo", event.target.querySelector("#photo").files[0])}
         formData.append("description", event.target.querySelector('#description').value);
         formData.append("user_id", cookie.user._id);
         formData.append('email', cookie.user.email)

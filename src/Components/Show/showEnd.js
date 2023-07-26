@@ -46,6 +46,7 @@ function ShowEnd(){
                                                                     <div class="mb-3">
                                                                         <label htmlFor="photo" class="form-label">Image de la bannière</label>
                                                                         <input type="file" name="photo" class="form-control" id="photo" aria-describedby="photo"/>
+                                                                        <code id="fileErreur"></code>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label htmlFor="accueil" class="form-label">Mot d'accueil</label>
@@ -110,7 +111,7 @@ function ShowEnd(){
                                                                 <div class='col-lg-6'>
                                                                     <div class="mb-3">
                                                                         <label htmlFor="titre" class="form-label">Titre du service</label>
-                                                                        <input type="text" name='titre' value="${item.titre}" class="form-control" id="titre" aria-describedby="titre" required/>
+                                                                        <input type="text" name='titre' value="${item.titre}" placeholder="Titre du service *" class="form-control" id="titre" aria-describedby="titre" required/>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <div class="form-group form-group-textarea ">
@@ -123,6 +124,7 @@ function ShowEnd(){
                                                                     <div class="mb-3">
                                                                         <label htmlFor="photo" class="form-label">Image descriptive</label>
                                                                         <input type="file" class="form-control" id="photo" name="photo" aria-describedby="photo"/>
+                                                                        <code id="fileErreur"></code>
                                                                     </div>
                                                                 </div>
                                                                 <input type="text" class="form-control" value="service"  name="entite" aria-describedby="entite" hidden required/>
@@ -172,12 +174,12 @@ function ShowEnd(){
                                                                 <div class='col-lg-6'>
                                                                     <div class="mb-3">
                                                                         <label htmlFor="titre" class="form-label">Titre du tableau</label>
-                                                                        <input type="text" name='titre' value="${item.titre}" class="form-control" id="titre" aria-describedby="titre" required/>
+                                                                        <input type="text" name='titre' value="${item.titre}" placeholder="Titre du tableau *" class="form-control" id="titre" aria-describedby="titre" required/>
                                                                     </div>
 
                                                                     <div class="mb-3">
                                                                         <label htmlFor="sousTitre" class="form-label">Sous-titre du tableau</label>
-                                                                        <input type="text" name='sousTitre' value="${item.sousTitre}" class="form-control" id="sousTitre" aria-describedby="sousTitre" required/>
+                                                                        <input type="text" name='sousTitre' value="${item.sousTitre}" placeholder="Sous-titre du tableau *" class="form-control" id="sousTitre" aria-describedby="sousTitre" required/>
                                                                     </div>
 
                                                                     <div class="mb-3">
@@ -203,6 +205,7 @@ function ShowEnd(){
                                                                     <div class="mb-3">
                                                                         <label htmlFor="photo" class="form-label">Image descriptive</label>
                                                                         <input type="file" class="form-control" id="photo" name="photo" aria-describedby="photo"/>
+                                                                        <code id="fileErreur"></code>
                                                                     </div>
                                                                     <input type="text" class="form-control" value={"table"}  name="entite" aria-describedby="entite" hidden required/>
                                                                 </div>
@@ -293,9 +296,21 @@ const updated = (event) =>{
         let formData = new FormData();
         formData.append("id", event.target.id);
         formData.append("entite", event.target.className);
-        if(event.target.querySelector('#photo').files[0]){
-            formData.append("photo", event.target.querySelector('#photo').files[0])
+
+        const photo = event.target.querySelector('#photo').files[0];
+        const fileErreur = event.target.querySelector('#fileErreur');
+        fileErreur.textContent = "";
+        
+        if(photo){
+            if(photo.size <= 1024*1024*2){
+                formData.append('photo', photo);
+            }else{
+                event.target.querySelector('#photo').focus();
+                fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                return;
+            }
         }
+
         if(classForm === "banniere"){
             formData.append("accueil", event.target.querySelector('#accueil').value);
             formData.append("plateforme", event.target.querySelector('#plateforme').value);
@@ -318,6 +333,16 @@ const updated = (event) =>{
         .then(res => res.json())
         .then(succes => {
             if(succes.data){
+                event.target.querySelectorAll('input').forEach(item => {
+                    item.value = '';
+                });
+                if(event.target.querySelectorAll('textarea')){
+                    event.target.querySelectorAll('textarea').forEach(item => {
+                        item.textContent = '';
+                        item.value = '';
+                    })
+                }
+
                 event.target.querySelector('#alerter').innerHTML = "Enrégistrement effectué avec succès.";
                 event.target.querySelector('#alerter').className = "alert alert-success text-center";
             }else{

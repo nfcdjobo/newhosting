@@ -12,12 +12,14 @@ let table = [];
 function AllExpositions(params) {
     let [state, setState] = useState([])
     useEffect(()=>{
+        
         if(isCookie_user_authorization !== "PASSANT"){
             window.location.href = '/login#!';
         }else{
             fetch(api_url+'getAllExposition')
             .then(res => res.json())
             .then( succes => {
+                console.log(succes)
                 let exposition = [];
                 if(succes.data && succes.data.length >0){
                     succes.data.sort((a, b) => new Date(b.createdAt)-new Date(a.createdAt)).forEach( item => {
@@ -67,7 +69,7 @@ function AllExpositions(params) {
             .catch(error => console.log(error))
         }
     }, [])
-    if(isCookie_user_authorization !== "PASSANT"){
+    if(isCookie_user_authorization === "PASSANT"){
         return (
             <>
                 <Navbar />
@@ -125,7 +127,7 @@ function AllExpositions(params) {
 }
 
 function createLike(event){
-    if(isCookie_user_authorization !== "PASSANT"){
+    if(isCookie_user_authorization == "PASSANT" || isCookie_user_authorization == "GESTIONNAIRE" || isCookie_user_authorization == "AUTEUR"){
         const id=event.target.id;
         const alertLike = document.getElementById('alert-like-'+id);
         let formaData = new FormData();

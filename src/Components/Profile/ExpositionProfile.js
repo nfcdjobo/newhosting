@@ -56,13 +56,13 @@ function ExpositionProfile(params) {
                                             <div class="btn-group me-md-4" role="group" aria-label="First group">
                                                 <button type="button" class="btn btn-success position-relative btn-sm" >
                                                     <i class="bi bi-heart-fill"></i>
-                                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${Math.floor(likes.length*100/AllLike.length)}%</span>
+                                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${Math.floor(likes.length*100/(AllLike.length > 0 ? AllLike.length : 1))}%</span>
                                                 </button>
                                             </div>
                                             <div class="d-grid gap-2 d-md-flex justify-content-md-end" role="group" aria-label="Second group">
                                                 <button type="button" class="btn btn-secondary position-relative btn-sm" >
                                                     <i class="bi bi-chat-left-text-fill"></i>
-                                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${Math.floor(comments.length*100/AllCommentaire.length)}%</span>
+                                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">${Math.floor(comments.length*100/(AllCommentaire.length > 0 ? AllCommentaire.length : 1))}%</span>
                                                 </button>
                                             </div>
                                         </div>

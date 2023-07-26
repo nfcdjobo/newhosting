@@ -7,6 +7,7 @@ import isCookie_user_authorization from "../controlleur/controlleur";
 
 function ModifierDomaine(params) {
     let [state, setState] = useState({});
+    
     useEffect(() => {
         if(isCookie_user_authorization === "GESTIONNAIRE"){
             fetch(api_url+'getDomaineById/'+window.location.href.split('#!')[1], {
@@ -21,6 +22,13 @@ function ModifierDomaine(params) {
             window.location.href = '/login#!';
         }
     }, []);
+    const chanImage = event=>{
+        if(event.target.files[0]){
+            const image = document.getElementById('Photos');
+            image.onload = ()=>{URL.revokeObjectURL(image.src)}
+            image.src = URL.createObjectURL(event.target.files[0]);
+        }
+    }
     if(isCookie_user_authorization === "GESTIONNAIRE"){
         return(
             <>
@@ -58,8 +66,9 @@ function ModifierDomaine(params) {
                                         </div>
                                         <label htmlFor="photo" className="form-label">Image d'accompagnement</label>
                                         <div className="input-group">
-                                            <input className="form-control" name="photo" id="photo" type="file"  aria-describedby="button-search"/>
+                                            <input className="form-control" name="photo" id="photo" type="file" onChange={chanImage}  aria-describedby="button-search"/>
                                         </div>
+                                        <code id="fileErreur"></code>
                                         <hr />
                                         <button className="btn btn-primary" type="submit" id="btn-submit-red">Envoyer <i className="bi bi-send-fill"></i></button>
                                     </form>
@@ -77,24 +86,39 @@ function ModifierDomaine(params) {
     }
 }
 
+
+
+
+
 function EditeDomaine(event){
     if(isCookie_user_authorization === "GESTIONNAIRE"){
         event.preventDefault();
+        const formData = new FormData();
         const libelle = document.getElementById('libelle');
-        const photo = document.getElementById('photo');
         const editeAlert = document.getElementById('edite-alert');
         const Photo = document.getElementById('Photos');
         const Libelle = document.getElementById('Libelle');
         const srcSet = document.getElementById('srcSet');
 
+        const photo = event.target.querySelector('#photo').files[0];
+        const fileErreur = document.getElementById('fileErreur');
+        fileErreur.textContent = "";
+        
+        if(photo){
+            if(photo.size <= 1024*1024*2){
+                formData.append('photo', photo);
+            }else{
+                event.target.querySelector('#photo').focus();
+                fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                return;
+            }
+        }
+
         editeAlert.textContent = "";
         editeAlert.className = "";
-        const formData = new FormData();
+        
         formData.append('libelle', libelle.value);
-        if(photo.files[0]){
-            formData.append('photo', photo.files[0]);
-            formData.append('id', window.location.href.split('#!')[1])
-        }
+        formData.append('id', window.location.href.split('#!')[1]);
         fetch(api_url+'uptateDomaine', {
             method: 'POST',
             body: formData,

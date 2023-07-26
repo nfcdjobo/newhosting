@@ -13,7 +13,7 @@ function Commentaire(params) {
     useEffect(()=>{
         if(isCookie_user_authorization === "PASSANT"){
             const urlPage = window.location.href;
-            fetch(api_url+'getByIdExposition/'+urlPage.slice(urlPage.indexOf('#!')+2).split('-')[0], {
+            fetch(api_url+'getExpositionById/'+urlPage.slice(urlPage.indexOf('#!')+2).split('-')[0], {
                 headers: { Authorization: `token ${cookie.token}`}
             })
             .then(res => res.json())

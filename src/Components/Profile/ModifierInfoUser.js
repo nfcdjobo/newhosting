@@ -15,10 +15,36 @@ function ModifierInfoUser(params) {
             document.getElementById('toggleEdite').addEventListener('click', ToggleEdite)
             selectDomaine.textContent = "";
             const data = success.data;
-            data.sort((a, b) => a.libelle.localeCompare(b.libelle)).forEach(item => {
+
+            data.filter(item => {
+                if(isCookie_user_authorization === "AUTEUR"){
+                    return (item.libelle !== 'ADMIRATEUR' && item.libelle !== 'GESTIONNAIRE');
+                }else if(isCookie_user_authorization === "GESTIONNAIRE"){
+                    return (item.libelle === 'GESTIONNAIRE');
+                }else if(isCookie_user_authorization === "PASSANT"){
+                    return (item.libelle === 'ADMIRATEUR')
+                }
+            }).sort((a, b) => a.libelle.localeCompare(b.libelle)).forEach(item => {
                 const option = document.createElement('option'); option.value = item._id; option.textContent = item.libelle.toUpperCase(); selectDomaine.append(option)
                 if(item._id === domaine._id ) option.selected = true;
             });
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // data.sort((a, b) => a.libelle.localeCompare(b.libelle)).forEach(item => {
+            //     const option = document.createElement('option'); option.value = item._id; option.textContent = item.libelle.toUpperCase(); selectDomaine.append(option)
+            //     if(item._id === domaine._id ) option.selected = true;
+            // });
             document.getElementById("form-edite-user").addEventListener('submit', updateUser);
         })
         .catch(()=>{
@@ -47,6 +73,7 @@ function ModifierInfoUser(params) {
                         <div className="input-group">
                             <input className="form-control" type="file" name="photo" id="photo"  aria-describedby="button-search" accept=".png, .jpg, .jpeg, .webp, .avif, .gif" onChange={verifySize} />
                         </div>
+                        <code id='fileErreur'></code>
                     
                         <label htmlFor="email" className="form-label">Email (<code style={{ color: 'orange' }}>Désactivité</code>)</label>
                         <div className="input-group">
@@ -88,9 +115,22 @@ function updateUser(event) {
             const alertUpdate = document.getElementById('alert-update')
             formData.append('telephone', event.target.querySelector('#telephone').value);
             formData.append('domaine_id', event.target.querySelector('#domaine_id').value);
-            if(event.target.querySelector('#photo').files[0]){
-                formData.append('photo', event.target.querySelector('#photo').files[0]);
+            
+            const photo = event.target.querySelector('#photo').files[0];
+            const fileErreur = document.getElementById('fileErreur');
+            fileErreur.textContent = "";
+            if(photo){
+                if(photo.size <= 1024*1024*2){
+                    formData.append('photo', photo);
+                }else{
+                    event.target.querySelector('#photo').focus();
+                    fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                    return;
+                }
             }
+            
+
+
             fetch(api_url+'updateUser', {
                 method: 'POST',
                 body: formData,

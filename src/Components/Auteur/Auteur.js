@@ -29,7 +29,7 @@ function Auteur(){
                                 <td>${item.nationalite}</td>
                                 <td>${item.email}</td>
                                 <td>${item.telephone}</td>
-                                <td><img src="${item.nomPrenom}" style="width: 35px; height: 35px"/></td>
+                                <td><img src="${item.photo}" style="width: 35px; height: 35px"/></td>
                                 <td>${new Date(item.createdAt).toLocaleDateString('fr-FR', options)}</td>
                             </tr>`);
                     });

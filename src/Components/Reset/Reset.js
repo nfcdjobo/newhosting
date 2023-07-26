@@ -1,6 +1,8 @@
-import Validateur form '../../Validators/Validateur';
-import url_api from '../../url_api/url_api';
+import Validateur from '../../Validators/Validateur';
+import api_url from "../../api_url/api_url";
 import logo from '../../assets/img/logos/logo.png';
+import Footer from '../Footer/Footer';
+
 
 function Reset(params) {
     const resetedPassword = event => {
@@ -8,6 +10,8 @@ function Reset(params) {
         const espaceCode = event.target.querySelector('#espaceCode');
         const code = event.target.querySelector('#code');
         const alerter = document.getElementById('alerter');
+        const adresse = document.getElementById('adresse');
+        const email = document.getElementById('email');
         alerter.textContent = '';
         alerter.className = '';
         Validateur.validateurEmail(event.target.querySelector('#email').value)
@@ -17,21 +21,25 @@ function Reset(params) {
                 .then(options2 => {
                     if(options2){
                         if(event.target.querySelector('#password').value === event.target.querySelector('#passwordConfirm').value){
-                            fetch(api_url+'sendEmail', {
+                            fetch(api_url+'testEmail', {
                                 method: 'POST',
                                 body: new URLSearchParams(new FormData(event.target))
                             })
                             .then(res => res.json())
                             .then(emailSend => {
-                                espaceCode.hidden = false;
+                                if(!emailSend.data){
+                                    alerter.textContent =  "Compte introvable !";
+                                    alerter.className = 'alert alert-danger text-center';
+                                    return;
+                                }
                                 
+                                espaceCode.hidden = false;
                                 adresse.textContent=' '+email.value;
                                 event.target.querySelector('#lien').href = emailSend.data.url;
-                                event.target.querySelector('#login-reset').hidden = true;
-                                event.target.querySelector('#submiter').hidden = true;
-                                event.target.querySelector('#register-login.').hidden = true;
+                                event.target.querySelectorAll('.col-lg-6, #col-lg-12, #submiter').forEach(item=>item.hidden = true);
+                                
                                 code.addEventListener('blur', even => {
-                                    fetch(url_api+'reset', {
+                                    fetch(api_url+'reset', {
                                         method: 'POST',
                                         body: new URLSearchParams(new FormData(event.target))
                                     })
@@ -44,22 +52,19 @@ function Reset(params) {
                                                 window.location.href = '/login#!';
                                             }, 1000);
                                         }else{
-                                            alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
+                                            alerter.textContent = resed.msg;
                                             alerter.className = 'alert alert-danger text-center';
                                         }
                                     })
-                                    .catch(()=>{
-                                        alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
+                                    .catch((error)=>{
+                                        alerter.textContent = error.message;
                                         alerter.className = 'alert alert-danger text-center';
                                     })
                                 })
-                                .catch(()=>{
-                                    alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
-                                    alerter.className = 'alert alert-danger text-center';
-                                })
                             })
-                            .catch(()=>{
-                                alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
+                            .catch((error)=>{
+                                alert(23)
+                                alerter.textContent =  error.message;
                                 alerter.className = 'alert alert-danger text-center';
                             })
                         }else{
@@ -73,8 +78,8 @@ function Reset(params) {
                         event.target.querySelector('#password').focus();
                     }
                 })
-                .catch(()=>{
-                    alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
+                .catch((error)=>{
+                    alerter.textContent =  error.message;
                     alerter.className = 'alert alert-danger text-center';
                 })
             }else{
@@ -83,23 +88,24 @@ function Reset(params) {
                 event.target.querySelector('#email').focus();
             }
         })
-        .catch(()=>{
-            alerter.textContent = 'Service momentanenent indisponible, veuillez donc réessayer plus tard !.';
+        .catch((error)=>{
+            alerter.textContent =  error.message;
             alerter.className = 'alert alert-danger text-center';
         })
     }
     return (
-        <div className="App">
+        <>
             <section className="page-section" id="contact">
             <div className="container">
                 <div className="text-center">
-                    <a href="/"><img src={logo} className="" alt="logo" title="Logo Sophia-Culturas"></img></a>
+                    <a href="/"><img src={logo} className="" alt="logo" title="Logo Sophia-Culturas" style={{ width: 250+'px' }}></img></a>
+                    <br></br>
                     <h2 className="section-heading">Réenitialisation</h2>
                     <h3 className="section-subheading text-muted">Réenitialisez votre mot de passe oublié avec <a href="#">Sophia-Culturas</a></h3>
                  </div>
                 
                 <form id="formulaire" data-sb-form-api-token="API_TOKEN" onSubmit={resetedPassword}>
-                     <div className="row ">
+                     <div className="row " id="row-form">
                         <div className="col-lg-6">
                             <div className="col-lg-12 input-group mb-3">
                                 <label htmlFor="email" className="input-group-text" id="basic-addon1">Adresse email</label>
@@ -125,25 +131,30 @@ function Reset(params) {
                                 <span id="error-code" style={{ color: 'red' }}></span>
                             </div>
                         </div>
-                        
+                        <hr></hr>
                         <div className="d-grid gap-2 col-6 mx-auto" id="submiter">
                             <div className="text-center" id="div-connexion"><button className="btn btn-outline-warning" id="submitRegister" type="submit">Valider</button></div>
                         </div>
-                        
+                    </div>
+                    <br></br>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <div className="form-group me-md-5 justify-content-md-start" id="col-lg-12">
+                            <div className="text-start"style={{ color: "white" }}> <a href="/register"> M'inscrire ici ?</a></div>
+                        </div>
+
+                        <div className="form-group justify-content-md-end">
+                            <div className="text-end"style={{ color: "white" }}> <a href="/login"> Me connecter ici ?</a></div>
+                        </div>
                     </div>
 
-                     <div className="row" id='register-login'>
-                        <div className="form-group col-lg-6">
-                            <div className="text-start"style={{ color: "white" }}> Je n'ai pas de compte,  <a href="/register"> m'inscrire ici ?</a></div>
-                        </div>
-                        <div className="form-group col-lg-6">
-                            <div className="text-end"style={{ color: "white" }}> Je ne souviens du mot de passe, <a href="/login"> me connecter ici ?</a></div>
-                        </div>
-                    </div>
+                     
+                    <br></br>
+                    <div className='' id='alerter' role='alert'></div>
                 </form>
             </div>
         </section>
-        </div>
+        <Footer />
+        </>
     )
 }
 export default Reset;

@@ -1,6 +1,6 @@
 import Navbar from '../Header/Navbar'
 import Footer from '../Footer/Footer';
-// On importe l'URL de base de l'API
+import logo from '../../assets/img/logos/logo.png';
 import api_url from '../../api_url/api_url';
 import cookie from '../../Cookies/Cookies';
 import isCookie_user_authorization from '../controlleur/controlleur';
@@ -20,13 +20,23 @@ function Domaine(params) {
             event.preventDefault();
             const libelle = event.target.querySelector('#libelle').value;
             const photo = event.target.querySelector('#photo').files[0];
+            
+            const fileErreur = event.target.querySelector('#fileErreur');
+            fileErreur.textContent = "";
             const alerter = document.getElementById('alert');
             alerter.className = "";
             alerter.textContent = "";
             const formData = new FormData();
             formData.append("libelle", libelle);
-            if(photo){formData.append('photo', photo)};
-            // Ici dans la méthode fetch() on interroge notre API en concatenant l'URL de base avec la route qu'il faut
+            if(photo){
+                if(photo.size <= 1024*1024*2){
+                    formData.append('photo', photo);
+                }else{
+                    event.target.querySelector('#photo').focus();
+                    fileErreur.textContent = photo.size/(1024*1024) + " Mo est trop volumineuse comment taille du fichier. Au  plus 2 Mo."
+                    return;
+                }
+            }
             fetch(api_url+'createDomaine', {
                 method: 'POST',
                 body: formData,
@@ -52,7 +62,9 @@ function Domaine(params) {
                 <section className="page-section" id="contact">
                 <div className="container">
                     <div className="text-center">
-                        <a href="/"><img src="#" className="" alt="logo" title="Logo Sophia-Culturas"></img></a>
+                        <br></br><br></br>
+                         <a href="/"><img src={logo} className="" alt="logo" title="Logo Sophia-Culturas" style={{ width: 250+'px' }}></img></a>
+                        <br></br><br></br>
                         <h2 className="section-heading">Ajout des domaine</h2>
                         <h3 className="section-subheading text-muted"><a href="#">Sophia-Culturas</a> vous souhaite les bienvenues</h3>
                     </div>
@@ -70,16 +82,17 @@ function Domaine(params) {
                                     <label htmlFor="photo" className="input-group-text">Image descriptive</label>
                                     <input type="file" name="photo" className="form-control" placeholder="Image descriptive du domaine" aria-label="photo" id="photo" aria-describedby="basic-addon1" onChange={chanImage} required/>
                                 </div>
+                                <code id='fileErreur'></code>
                             </div>
-                            
+                            <hr></hr>
                             <div className="d-grid gap-2 col-6 mx-auto" id="submiter">
                                 <div className="text-center" id="div-connexion"><button className="btn btn-outline-warning" id="submitRegister" type="submit">Connexion</button></div>
                             </div>
-                            <hr/>
+                            <hr></hr>
                             <div className="text-center" >
                                 <img  className="rounded" alt="" id="image" style={{ width: '12rem', maxHeight: '12rem' }}/>
                             </div>
-                            <hr/>
+                            <hr></hr>
                             <div className="" role="alert" id="alert"></div>
                         </div>
                     </form>

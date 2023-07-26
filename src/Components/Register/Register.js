@@ -9,7 +9,6 @@ function Register(params) {
         let validateurTelephone = input => input.replaceAll(' ', '').split('').every(item => '0123456789'.includes(item)) && input.replaceAll(' ', '').length>=10 ? true : false;
         let validateurPassword = (input1, input2) => (!input1.includes(' ') && input1.length >= 4 && input1==input2) ? true : false;
         let validateurEmail = input => input.includes('@') && input.split('@').length == 2 &&  input.split('@')[1].split('.').length==2 && input.split('@')[1].split('.')[0]!="" && !input.split('@')[1].split('.')[0].split('').every(item=>'0123456789'.includes(item)) & !input.split('@')[1].split('.')[1].split('').every(item=>'0123456789'.includes(item)) ? true : false;
-
         fetch(api_url+'getAllDomaine')
         .then(res => res.json())
         .then(succes => {
@@ -82,7 +81,6 @@ function Register(params) {
                                     formData.append('nationalite', nationalite.value);
                                     formData.append('password', password.value);
                                     formData.append('telephone', telephone.value);
-                                    // entite == "PASSANT" ? formData.append('domaine_id', 'ADMIRATEUR') : ;
                                     if(photo.files[0]){formData.append('photo', photo.files[0])};
                                     if(entite==='PASSANT'){
                                         fetch(api_url+'getDomaineByLibelle/'+'ADMIRATEUR')
@@ -236,7 +234,7 @@ function Register(params) {
                                 
                         </div>
                         <br/>
-                        <div role="alert" className='alert alert-success' id="alert">hgd</div>
+                        <div role="alert"  id="alert"></div>
 
                         <div className="row" id="login-reset">
                             <div className="form-group col-lg-6">
@@ -280,7 +278,5 @@ function verifySize(event){
         errorFile.textContent = "";
     }
 }
-
-
 
 export default Register;

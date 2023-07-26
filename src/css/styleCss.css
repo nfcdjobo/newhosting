@@ -10947,11 +10947,11 @@ header.masthead {
   padding-bottom: 6rem;
   text-align: center;
   color: #fff;
-  background-image: url("../assets/bannière1.jpg");
+  background-image: url("./banniere1.jpg");
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center center;
-  background-size: cover;
+  background-size: cover cover;
 }
 header.masthead .masthead-subheading {
   font-size: 1.5rem;
